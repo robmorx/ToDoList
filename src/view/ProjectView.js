@@ -4,17 +4,21 @@ export default class ProjectView {
     this.createButton = $("#create-project");
   }
 
-  static renderProjects(projects) {
+  static renderProjects(projects = []) {
     const list = $("#project-list");
     list.empty();
-    projects.forEach((project, index) => {
-      list.append(`
-        <li class="project-item" data-index="${index}">
-          <strong>${project.name}</strong>
-          <button class="delete-project" data-index="${index}">🗑️</button>
-        </li>
-      `);
-    });
+    if (projects.length === 0) {
+      list.append("<li>No projects available. Please create a new project.</li>");
+    }else {
+      projects.forEach((project, index) => {
+        list.append(`
+          <li class="project-item" data-index="${index}">
+            <strong>${project.name}</strong>
+            <button class="delete-project" data-index="${index}">🗑️</button>
+          </li>
+        `);
+      });
+   }
   }
   
   static bindCreateProject(handle) {
