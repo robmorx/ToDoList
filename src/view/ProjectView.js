@@ -1,17 +1,18 @@
 export default class ProjectView {
 
   constructor() {
-    
+    // Bind handlers to instance
+    this.selectProject = null;
+    this.deleteProject = null;
   }
 
-  static renderProjects(projects) {
+  renderProjects(projects) {
     const list = $("#project-list");
     list.empty();
     if (projects.length === 0) {
       list.append("<li>No projects available. Please create a new project.</li>");
-    }else {
+    } else {
       projects.forEach((project, index) => {
-        console.log(project);
         list.append(`
           <li class="project-item list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
             <span><strong>${project.name}</strong></span>
@@ -20,35 +21,41 @@ export default class ProjectView {
             </button>
           </li>
         `);
-        $(".delete-project").on("click", () => {
-          const index = $(this).data("index");
-          this.deleteProject(index);
-
-        });
-        $(".project-item").on("click", function() {
-          const index = $(this).data("index");
-          this.selectProject(index);
-        });
       });
-   }
+
+      // Delegate events for better performance and correct binding
+      list.off("click", ".delete-project");
+      list.on("click", ".delete-project", (e) => {
+        e.stopPropagation();
+        const index = $(e.currentTarget).data("index");
+        if (this.deleteProject) this.deleteProject(index);
+      });
+
+      list.off("click", ".project-item");
+      list.on("click", ".project-item", (e) => {
+        const index = $(e.currentTarget).data("index");
+        if (this.selectProject) this.selectProject(index);
+      });
+    }
   }
-  
-  static bindCreateProject(handler) {
+
+  bindCreateProject(handler) {
     $("#create-project-btn").on("click", handler);
   }
-  static getFormData() {
+
+  getFormData() {
     return $("#new-project-name").val();
-    
   }
-  
-  static cleanForm() {
+
+  cleanForm() {
     $("#new-project-name").val("");
   }
 
-  static bindSelectProject(handler) {
+  bindSelectProject(handler) {
     this.selectProject = handler;
   }
-  static delete(handler) {
+
+  delete(handler) {
     this.deleteProject = handler;
   }
 }

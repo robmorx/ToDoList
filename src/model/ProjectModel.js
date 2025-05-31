@@ -1,24 +1,23 @@
 export default class ProjectModel {
-    static projects = [];
     constructor() {
         this.projects = [];
     }
 
-    static addProject(project) {
+    addProject(project) {
         this.projects.push(project);
     }
 
-    static deleteProject(index) {
+    deleteProject(index) {
         if (index >= 0 && index < this.projects.length) {
             this.projects.splice(index, 1);
         }
     }
 
-    static getProjects() {
+    getProjects() {
         return this.projects;
     }
 
-    static getProjectByIndex(index) {
+    getProjectByIndex(index) {
         if (index >= 0 && index < this.projects.length) {
             return this.projects[index];
         }

@@ -4,6 +4,8 @@ import TaskController from './TaskController.js';
 import Project from '../entity/Project.js';
 export default class ProjectController {
     constructor() {
+        this.ProjectView = new ProjectView();
+        this.ProjectModel = new ProjectModel();
         this.init();
         
         
@@ -15,30 +17,31 @@ export default class ProjectController {
         this.bindEvents();
     }
     renderProjects() {
-        ProjectView.renderProjects(ProjectModel.getProjects());
+        this.ProjectView.renderProjects(this.ProjectModel.getProjects());
     
     }
     addProject() {
-        const project  = new Project(ProjectView.getFormData());
-        ProjectModel.addProject(project);
+        const project  = new Project(this.ProjectView.getFormData());
+        this.ProjectModel.addProject(project);
         this.renderProjects();
+        this.ProjectView.cleanForm();
     }
 
     selectedProject(index) {
-        const project = ProjectModel.getProjectByIndex(index);
+        const project = this.ProjectModel.getProjectByIndex(index);
         if (project) {
-            TaskController.setProject(project);
-            TaskController.renderTasks();
+            this.TaskController.setProject(project);
+            this.TaskController.renderTasks();
         }
     }
 
     deleteProject(index) {
-        ProjectModel.deleteProject(index);
+        this.ProjectModel.deleteProject(index);
         this.renderProjects();
     }
     bindEvents() {
-        ProjectView.bindCreateProject(this.addProject.bind(this));
-        ProjectView.delete(this.deleteProject.bind(this));
-        ProjectView.bindSelectProject(this.selectedProject.bind(this));
+        this.ProjectView.bindCreateProject(this.addProject.bind(this));
+        this.ProjectView.delete(this.deleteProject.bind(this));
+        this.ProjectView.bindSelectProject(this.selectedProject.bind(this));
     }
 }
