@@ -15,11 +15,11 @@ export default class ProjectController {
         this.bindEvents();
     }
     renderProjects() {
-        ProjectView.renderProjects(this.model.getProjects());
+        ProjectView.renderProjects(ProjectModel.getProjects());
     
     }
     addProject() {
-        const project  = new Project(this.view.getFormData());
+        const project  = new Project(ProjectView.getFormData());
         ProjectModel.addProject(project);
         this.renderProjects();
     }

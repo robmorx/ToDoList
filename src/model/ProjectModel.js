@@ -3,21 +3,21 @@ export default class ProjectModel {
         this.projects = [];
     }
 
-    addProject(project) {
+    static addProject(project) {
         this.projects.push(project);
     }
 
-    deleteProject(index) {
+    static deleteProject(index) {
         if (index >= 0 && index < this.projects.length) {
             this.projects.splice(index, 1);
         }
     }
 
-    getProjects() {
+    static getProjects() {
         return this.projects;
     }
 
-    getProjectByIndex(index) {
+    static getProjectByIndex(index) {
         if (index >= 0 && index < this.projects.length) {
             return this.projects[index];
         }
