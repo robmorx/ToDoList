@@ -37,12 +37,8 @@ export default class ProjectController {
         this.renderProjects();
     }
     bindEvents() {
-        this.view.bindCreateProject(this.addProject.bind(this));
-        this.view.delete((index) => {
-            this.deleteProject(index);
-        });
-        this.view.bindSelectProject((index) => {
-            this.selectedProject(index);
-        });
+        ProjectView.bindCreateProject(this.addProject.bind(this));
+        ProjectView.delete(this.deleteProject.bind(this));
+        ProjectView.bindSelectProject(this.selectedProject.bind(this));
     }
 }

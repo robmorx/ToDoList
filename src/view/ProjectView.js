@@ -1,49 +1,54 @@
 export default class ProjectView {
 
   constructor() {
-    this.createButton = $("#create-project");
+    
   }
 
-  static renderProjects(projects = []) {
+  static renderProjects(projects) {
     const list = $("#project-list");
     list.empty();
     if (projects.length === 0) {
       list.append("<li>No projects available. Please create a new project.</li>");
     }else {
       projects.forEach((project, index) => {
+        console.log(project);
         list.append(`
-          <li class="project-item" data-index="${index}">
-            <strong>${project.name}</strong>
-            <button class="delete-project" data-index="${index}">🗑️</button>
+          <li class="project-item list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
+            <span><strong>${project.name}</strong></span>
+            <button class="delete-project btn btn-danger btn-sm" data-index="${index}" title="Delete Project">
+              <span aria-hidden="true">🗑️</span>
+            </button>
           </li>
         `);
+        $(".delete-project").on("click", () => {
+          const index = $(this).data("index");
+          this.deleteProject(index);
+
+        });
+        $(".project-item").on("click", function() {
+          const index = $(this).data("index");
+          this.selectProject(index);
+        });
       });
    }
   }
   
-  static bindCreateProject(handle) {
-    this.createButton.on("click", handle);
+  static bindCreateProject(handler) {
+    $("#create-project-btn").on("click", handler);
   }
   static getFormData() {
-    return {
-      name: $("#project-name").val().trim(),
-    };
+    return $("#new-project-name").val();
+    
   }
   
   static cleanForm() {
-    $("#project-name").val("");
+    $("#new-project-name").val("");
   }
 
-  static bindSelectProject(handle) {
-    $(".project-item").on("click", function() {
-      const index = $(this).data("index");
-      handle(index);
-    });
+  static bindSelectProject(handler) {
+    this.selectProject = handler;
   }
-  static delete(handle) {
-    $(".delete-project").on("click", function() {
-      const index = $(this).data("index");
-      handle(index);
-    });
+  static delete(handler) {
+    this.deleteProject = handler;
   }
 }

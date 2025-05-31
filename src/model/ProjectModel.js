@@ -1,4 +1,5 @@
 export default class ProjectModel {
+    static projects = [];
     constructor() {
         this.projects = [];
     }
