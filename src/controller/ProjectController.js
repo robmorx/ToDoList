@@ -28,10 +28,12 @@ export default class ProjectController {
     }
 
     selectedProject(index) {
+        
         const project = this.ProjectModel.getProjectByIndex(index);
+        console.log(project);
         if (project) {
-            this.TaskController.setProject(project);
-            this.TaskController.renderTasks();
+            this.TaskController = new TaskController(project, index);
+            
         }
     }
 
