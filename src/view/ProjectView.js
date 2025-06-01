@@ -19,6 +19,7 @@ export default class ProjectView {
             <button class="delete-project btn btn-danger btn-sm" data-index="${index}" title="Delete Project">
               <span aria-hidden="true">🗑️</span>
             </button>
+            <ul id = "task-list${index}" class="task-list mt-2" style="display: none;"></ul>
           </li>
         `);
       });
@@ -28,14 +29,15 @@ export default class ProjectView {
       list.on("click", ".delete-project", (e) => {
         e.stopPropagation();
         const index = $(e.currentTarget).data("index");
-        if (this.deleteProject) this.deleteProject(index);
+        this.deleteProject(index);
       });
 
-      list.off("click", ".project-item");
-      list.on("click", ".project-item", (e) => {
+      $(".project-item").on("click", (e) => {
         const index = $(e.currentTarget).data("index");
-        if (this.selectProject) this.selectProject(index);
+          this.selectProject(index);
       });
+      
+      
     }
   }
 
