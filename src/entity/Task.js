@@ -1,5 +1,7 @@
 export default class Task {
-    constructor(title, description, deadline, priority) {
+    constructor(taskFormData) {
+        const { title, description, deadline, priority } = taskFormData;
+        
         this.title = title;
         this.description = description;
         this.deadline = deadline;
