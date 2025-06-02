@@ -20,6 +20,7 @@ export default class ProjectView {
               <span aria-hidden="true">🗑️</span>
             </button>
             <ul id = "task-list${index}" class="task-list mt-2" style="display: none;"></ul>
+            
           </li>
         `);
       });
@@ -41,11 +42,24 @@ export default class ProjectView {
     }
   }
 
+  hideView() {
+    $("#project-list").hide();
+    $("#create-project-btn").hide();
+    $("#new-project-name").hide();
+    $("#filter-div").hide();
+  }
+  showView() {
+    $("#project-list").show();
+    $("#create-project-btn").show();
+    $("#new-project-name").show();
+    $("#filter-div").show();
+  }
   bindCreateProject(handler) {
     $("#create-project-btn").on("click", handler);
   }
 
   getFormData() {
+    
     return $("#new-project-name").val();
   }
 
