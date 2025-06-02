@@ -3,6 +3,7 @@ export default class TaskView {
   constructor(tasks, index) {
     
     this.renderTasks(tasks, index);
+    console.log("TaskView initialized");
     this.submitTask = null;
     this.deleteTask = null;
     this.toggleTask = null;
@@ -10,6 +11,7 @@ export default class TaskView {
   
   renderTasks(tasks, projectIndex) {
     const $list = $("#task-list");
+    
     $list.empty();
 
     // Botón para cerrar la vista de tareas y regresar
@@ -60,6 +62,25 @@ export default class TaskView {
     $list.removeClass('d-none');
   }
 
+  renderNewTask(task) {
+    console.log("Rendering new task:", task);
+    
+    const $list = $("#task-list");
+    const index = $list.children().length;
+    $list.append(`
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <input type="checkbox" class="toggle-task" data-index="${index}" ${task.completed ? "checked" : ""}>
+          <span class="${task.completed ? "text-decoration-line-through" : ""}">
+            <strong>${task.title}</strong> - ${task.description || ""}
+            <span class="badge bg-${task.priority === "High" ? "danger" : task.priority === "Medium" ? "warning" : "secondary"} ms-2">${task.priority}</span>
+            ${task.deadline ? `<small class="text-muted ms-2">${task.deadline}</small>` : ""}
+          </span>
+        </div>
+        <button class="btn btn-sm btn-danger delete-task" data-index="${index}">🗑️</button>
+      </li>
+    `);
+  }
   
   bindCloseTaskView(handler) {
     this.bindCloseTaskView = handler;
@@ -118,7 +139,7 @@ export default class TaskView {
       });
       $("#taskSubmit").on('click', (e) =>{
         e.preventDefault();
-        this.submitTask;
+        this.submitTask();
         
       })
     }
@@ -127,14 +148,15 @@ export default class TaskView {
   }
 
   getDataFromModal() {
+    const formArray = $('#addTaskForm').serializeArray();
     const formData = {};
-    $('#addTaskForm').find('input, select, textarea').each(function() {
-      const name = $(this).attr('name');
-      if (name) {
-        formData[name] = $(this).val();
-      }
-    }
-    );
+    formArray.forEach(field => {
+      formData[field.name] = field.value;
+    });
+    
+    //Not a good practice
+    $('#addTaskForm').val("");
+    $('#addTaskForm').hide();
     return formData;
   }
   onTaskSubmit(handler) {
