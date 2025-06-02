@@ -2,6 +2,7 @@ import ProjectView from '../view/ProjectView.js';
 import ProjectModel from '../model/ProjectModel.js';
 import TaskView from '../view/TaskView.js';
 import Project from '../entity/Project.js';
+import Task from '../entity/Task.js';
 
 export default class ProjectController {
     constructor() {
@@ -45,11 +46,14 @@ export default class ProjectController {
     }
     
     addTask() {
-        const task = this.taskView.getDataFromModal();
+        
+        const task = new Task(this.taskView.getDataFromModal());
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
-            project.addTask(task);             
-            this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
+            project.addTask(task);
+            this.taskView.renderNewTask(task);
+            //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
+            //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
         }
     }
 
@@ -57,8 +61,8 @@ export default class ProjectController {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
             project.toggleTaskCompletion(taskIndex);
-            this.ProjectModel.updateProject(this.selectedProjectIndex, project);
-            this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
+            //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
+            //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
             this.renderProjects();
         }
     }
@@ -73,8 +77,8 @@ export default class ProjectController {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
             project.deleteTask(taskIndex); // Asegúrate de tener este método en Project
-            this.ProjectModel.updateProject(this.selectedProjectIndex, project);
-            this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
+            //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
+            //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
             this.renderProjects();
         }
     }
