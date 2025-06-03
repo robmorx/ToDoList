@@ -76,9 +76,9 @@ export default class ProjectController {
     deleteTask(taskIndex) {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
-            project.deleteTask(taskIndex); // Asegúrate de tener este método en Project
-            //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
-            //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
+            project.deleteTask(taskIndex); 
+            this.taskView.renderTaskList(project.getTasks());
+            
             
         }
     }
