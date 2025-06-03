@@ -11,19 +11,42 @@ export default class TaskView {
   
   renderTasks(tasks, projectIndex) {
     const $list = $("#task-list");
-    
     $list.empty();
 
-    // Botón para cerrar la vista de tareas y regresar
+    let $actionBar = $("#task-action-bar");
+    if ($actionBar.length === 0) {
+      $actionBar = $(`
+        <div id="task-action-bar" class="d-flex justify-content-between align-items-center mb-3"></div>
+      `);
+      $list.before($actionBar);
+    } else {
+      $actionBar.empty();
+    }
+
     const $closeBtn = $(`
-      <button class="btn btn-secondary mb-3" id="closeTaskViewButton" style="float:right;">
-        ← Volver
+      <button class="btn btn-secondary" id="closeTaskViewButton">
+        ← Return
       </button>
     `);
-    $list.before($closeBtn);
     $closeBtn.off('click').on('click', () => {
       if (this.bindCloseTaskView) this.bindCloseTaskView();
     });
+
+    const $addBtn = $(`<button class="btn btn-primary" id="addTaskButton">Add Task</button>`);
+    $addBtn.off('click').on('click', () => {
+      this.onAddTask();
+    });
+
+    $actionBar.append($closeBtn, $addBtn);
+
+    this.renderTaskList(tasks);
+
+    $list.removeClass('d-none');
+  }
+
+  renderTaskList(tasks) {
+    const $list = $("#task-list");
+    $list.empty();
 
     if (!tasks || tasks.length === 0) {
       $list.append('<li class="list-group-item">No tasks for this project.</li>');
@@ -53,19 +76,13 @@ export default class TaskView {
         if (this.deleteTask) this.deleteTask(idx);
       });
     }
-    const $button = $(`<button class="btn btn-primary mt-3" id="addTaskButton">Add Task</button>`);
-    $list.append($button);
-    $button.on('click', () => {
-      this.onAddTask();
-    });
-
-    $list.removeClass('d-none');
   }
 
-  renderNewTask(task) {
+  /*renderNewTask(task) {
     console.log("Rendering new task:", task);
-    
+
     const $list = $("#task-list");
+    $list.empty();
     const index = $list.children().length;
     $list.append(`
       <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -80,7 +97,7 @@ export default class TaskView {
         <button class="btn btn-sm btn-danger delete-task" data-index="${index}">🗑️</button>
       </li>
     `);
-  }
+  }*/
   
   bindCloseTaskView(handler) {
     this.bindCloseTaskView = handler;
@@ -150,13 +167,14 @@ export default class TaskView {
   getDataFromModal() {
     const formArray = $('#addTaskForm').serializeArray();
     const formData = {};
+    //Remove data from form
     formArray.forEach(field => {
       formData[field.name] = field.value;
     });
     
     //Not a good practice
     $('#addTaskForm').val("");
-    $('#addTaskForm').hide();
+    $('#addTaskModal').hide();
     return formData;
   }
   onTaskSubmit(handler) {
@@ -171,10 +189,8 @@ export default class TaskView {
     this.deleteTask = handler;
   }
   hideView() {
-    $("#task-list").remove();
-    $("#addTaskButton").remove();
-    $("#closeTaskViewButton").remove();
-    $("#closeTaskViewButton").remove();
+    $("#task-list").empty();
+    $("#task-action-bar").empty();
   }
   
 }
