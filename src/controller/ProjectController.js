@@ -49,12 +49,12 @@ export default class ProjectController {
         
         const task = new Task(this.taskView.getDataFromModal());
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
-        if (project) {
-            project.addTask(task);
-            this.taskView.renderNewTask(task);
+        project.addTask(task);
+        this.taskView.renderTaskList(project.getTasks());
+        
+        console.log(this.ProjectModel.getProjectByIndex(this.selectedProjectIndex));   
             //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
             //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
-        }
     }
 
     toggleTaskCompletion(taskIndex) {
@@ -63,7 +63,7 @@ export default class ProjectController {
             project.toggleTaskCompletion(taskIndex);
             //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
             //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
-            this.renderProjects();
+            
         }
     }
     closeTask() {
@@ -79,7 +79,7 @@ export default class ProjectController {
             project.deleteTask(taskIndex); // Asegúrate de tener este método en Project
             //this.ProjectModel.updateProject(this.selectedProjectIndex, project);
             //this.taskView.renderTasks(project.getTasks(), this.selectedProjectIndex);
-            this.renderProjects();
+            
         }
     }
 
