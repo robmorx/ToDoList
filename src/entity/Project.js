@@ -23,4 +23,9 @@ export default class Project {
     getTasks() {
         return this.tasks;
     }
+    deleteTask(index) {
+        if (index >= 0 && index < this.tasks.length) {
+            this.tasks.splice(index, 1);
+        }
+    }
 }
