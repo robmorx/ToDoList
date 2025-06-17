@@ -2,7 +2,7 @@ export default class TaskModel {
     constructor(tasks = []) {
         this.tasks = tasks;
     }
-
+    
     addTask(task) {
         this.tasks.push(task);
     }

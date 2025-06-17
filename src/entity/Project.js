@@ -1,11 +1,15 @@
 export default class Project {
     
 
-    constructor(name, tasks = []) {
+    constructor(id ,name, tasks = []) {
+        this.id = id;
         this.name = name;
         this.tasks = tasks;
     }
 
+    getId(){
+        return this.id;
+    }
     getName() {
         return this.name;
     }

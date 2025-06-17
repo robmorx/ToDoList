@@ -15,7 +15,7 @@ export default class ProjectView {
       projects.forEach((project, index) => {
         list.append(`
           <li class="project-item list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
-            <span><strong>${project.name}</strong></span>
+            <span><strong>${project.getName()}</strong></span>
             <button class="delete-project btn btn-danger btn-sm" data-index="${index}" title="Delete Project">
               <span aria-hidden="true">🗑️</span>
             </button>

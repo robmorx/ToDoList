@@ -16,7 +16,7 @@ export default class ProjectController {
     init() {
         this.renderProjects();
         this.bindEvents();
-        this.ProjectModel.getFromLocalStorage();
+        this.ProjectModel.getFromApi();
         this.renderProjects();
     }
 
@@ -28,7 +28,7 @@ export default class ProjectController {
         const project = new Project(this.ProjectView.getFormData());
         if (project.getName() !== '' ) {
             this.ProjectModel.addProject(project);
-            this.ProjectModel.updateLocalStorage();
+            this.ProjectModel.postProject(project);
             this.renderProjects();
             this.ProjectView.cleanForm();
         }
@@ -52,8 +52,7 @@ export default class ProjectController {
         
         const task = new Task(this.taskView.getDataFromModal());
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
-        project.addTask(task);
-        this.ProjectModel.updateLocalStorage();
+        this.ProjectModel.postTasks(project.getId() ,task);
         this.taskView.renderTaskList(project.getTasks());
         
          
@@ -64,7 +63,7 @@ export default class ProjectController {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
             project.toggleTaskCompletion(taskIndex);
-            this.ProjectModel.updateLocalStorage();
+            this.ProjectModel.postProject(project);
             this.taskView.renderTaskList(project.getTasks());
 
         }
@@ -73,14 +72,14 @@ export default class ProjectController {
         this.taskView.hideView();
         this.ProjectView.renderProjects(this.ProjectModel.getProjects());
         this.ProjectView.showView();
-        this.selectedProjectIndex = null; // Reset the selected project index
-        this.taskView = null; // Clear the task view
+        this.selectedProjectIndex = null; 
+        this.taskView = null; 
     }
     deleteTask(taskIndex) {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
             project.deleteTask(taskIndex); 
-            this.ProjectModel.updateLocalStorage();
+            this.ProjectModel.deleteTask(project.getId());
             this.taskView.renderTaskList(project.getTasks());
             
             
@@ -88,8 +87,8 @@ export default class ProjectController {
     }
 
     deleteProject(index) {
-        this.ProjectModel.deleteProject(index);
-        this.ProjectModel.updateLocalStorage();
+        
+        this.ProjectModel.deleteProject(this.ProjectModel.getProjectByIndex(index).getId());
         this.renderProjects();
     }
 
