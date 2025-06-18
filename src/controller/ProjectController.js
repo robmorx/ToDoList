@@ -10,29 +10,26 @@ export default class ProjectController {
         this.ProjectModel = new ProjectModel();
         this.selectedProjectIndex = null;
         this.taskView = null;
+        this.initAsync();
+    }
+
+    async initAsync() {
+        await this.ProjectModel.getFromApi();
         this.init();
     }
 
     init() {
         this.renderProjects();
         this.bindEvents();
-        this.ProjectModel.getFromApi();
         this.renderProjects();
     }
 
     renderProjects() {
+        console.log('RenderProjects: ',this.ProjectModel.getProjects());
         this.ProjectView.renderProjects(this.ProjectModel.getProjects());
     }
 
-    addProject() {
-        const project = new Project(this.ProjectView.getFormData());
-        if (project.getName() !== '' ) {
-            this.ProjectModel.addProject(project);
-            this.ProjectModel.postProject(project);
-            this.renderProjects();
-            this.ProjectView.cleanForm();
-        }
-    }
+    
 
     selectProject(index) {
         this.selectedProjectIndex = index;
@@ -48,22 +45,28 @@ export default class ProjectController {
         }
     }
     
-    addTask() {
-        
+    async addProject() {
+        const project = new Project("", this.ProjectView.getFormData());
+        if (project.getName() !== '' ) {
+            await this.ProjectModel.postProject(project);
+            this.renderProjects();
+            this.ProjectView.cleanForm();
+        }
+    }
+
+    async addTask() {
         const task = new Task(this.taskView.getDataFromModal());
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
-        this.ProjectModel.postTasks(project.getId() ,task);
+        await this.ProjectModel.postTasks(project.getId(), task);
         this.taskView.renderTaskList(project.getTasks());
-        
-         
-        
     }
 
     toggleTaskCompletion(taskIndex) {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
+        console.log('Project:', project);
         if (project) {
             project.toggleTaskCompletion(taskIndex);
-            this.ProjectModel.postProject(project);
+            //this.ProjectModel.postProject(project);
             this.taskView.renderTaskList(project.getTasks());
 
         }
@@ -75,21 +78,25 @@ export default class ProjectController {
         this.selectedProjectIndex = null; 
         this.taskView = null; 
     }
-    deleteTask(taskIndex) {
+    async deleteTask(taskIndex) {
         const project = this.ProjectModel.getProjectByIndex(this.selectedProjectIndex);
         if (project) {
-            project.deleteTask(taskIndex); 
-            this.ProjectModel.deleteTask(project.getId());
+            const tasks = project.getTasks();
+            const taskId = tasks[taskIndex].getId();
+            console.log('Task ID to delete:', taskId, 'Project ID:', project.getId());
+            await this.ProjectModel.deleteTask(project.getId(), taskId);
+            console.log(project.getTasks());
+            project.deleteTask(taskIndex);
             this.taskView.renderTaskList(project.getTasks());
-            
-            
         }
     }
 
-    deleteProject(index) {
-        
-        this.ProjectModel.deleteProject(this.ProjectModel.getProjectByIndex(index).getId());
-        this.renderProjects();
+    async deleteProject(index) {
+        const project = this.ProjectModel.getProjectByIndex(index);
+        if (project) {
+            await this.ProjectModel.deleteProject(project.getId());
+            this.renderProjects();
+        }
     }
 
     bindEvents() {

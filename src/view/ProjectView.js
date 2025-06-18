@@ -13,15 +13,17 @@ export default class ProjectView {
       list.append("<li>No projects available. Please create a new project.</li>");
     } else {
       projects.forEach((project, index) => {
+        console.log(project);
         list.append(`
           <li class="project-item list-group-item d-flex justify-content-between align-items-center" data-index="${index}">
             <span><strong>${project.getName()}</strong></span>
-            <button class="delete-project btn btn-danger btn-sm" data-index="${index}" title="Delete Project">
-              <span aria-hidden="true">🗑️</span>
-            </button>
+            
             <ul id = "task-list${index}" class="task-list mt-2" style="display: none;"></ul>
             
           </li>
+          <button class="delete-project btn btn-danger btn-sm" data-index="${index}" title="Delete Project">
+              <span aria-hidden="true">🗑️</span>
+            </button>
         `);
       });
 

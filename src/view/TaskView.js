@@ -12,7 +12,7 @@ export default class TaskView {
   renderTasks(tasks, projectIndex) {
     const $list = $("#task-list");
     $list.empty();
-
+    console.log("Rendering tasks for project index:", tasks);
     let $actionBar = $("#task-action-bar");
     if ($actionBar.length === 0) {
       $actionBar = $(`
@@ -47,7 +47,7 @@ export default class TaskView {
   renderTaskList(tasks) {
     const $list = $("#task-list");
     $list.empty();
-
+    console.log("Rendering task list:", tasks);
     if (!tasks || tasks.length === 0) {
       $list.append('<li class="list-group-item">No tasks for this project.</li>');
     } else {

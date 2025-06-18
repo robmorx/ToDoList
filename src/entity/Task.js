@@ -8,7 +8,9 @@ export default class Task {
         this.priority = priority;
         this.completed = false;
     }
-    
+    getId() {
+        return this.id;
+    }
     toggleCompletion() {
         this.completed = !this.completed;
     }

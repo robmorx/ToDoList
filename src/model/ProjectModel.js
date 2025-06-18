@@ -4,98 +4,102 @@ import Project from '../entity/Project.js';
 export default class ProjectModel {
     constructor() {
         this.projects = [];
-        console.log(this.projects);
+        
     }
 
-    getFromApi() {
-        $.ajax({
-            url: 'http://localhost:8080/api/projects/',
-            method: 'GET',
-            success: (data) => {
-                this.projects = [];
-                data.forEach((project) => {
-                    const newProject = new Project(project.id, project.name, project.tasks);
-                    newProject.tasks = project.tasks.map(task => new Task(task.id, task.title, task.description, task.completed));
-                    this.projects.push(newProject);
-                });
-                return data;
-            },
-            error: (xhr, status, error) => {
-                console.error('GET error:', error);
-            }
-        });
+    async getFromApi() {
+        try {
+            const response = await fetch('http://localhost:8080/api/projects/');
+            const data = await response.json();
+            this.projects = [];
+            data.forEach((project) => {
+                const newProject = new Project(project.id, project.name, project.tasks);
+                newProject.tasks = project.tasks.map(task => new Task(task));
+                this.projects.push(newProject);
+            });
+            console.log('Projects loaded:', this.projects);
+            return true;
+        } catch (error) {
+            console.error('GET error:', error);
+            return false;
+        }
     }
 
-    postProject(project) {
-        $.ajax({
-            url: 'http://localhost:8080/api/projects/',
+    async postProject(project) {
+    try {
+        const response = await fetch('http://localhost:8080/api/projects/', {
             method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: project.getId(),
                 name: project.getName(),
                 task: project.getTasks()
-            }),
-            success: (data) => {
-                this.projects = this.projects.filter(p => p.getId() !== data.id);
-                this.addProject(new Project(data.id, data.name, data.tasks));
-            },
-            error: (xhr, status, error) => {
-                console.error('POST error:', error);
-            }
+            })
         });
+        const data = await response.json();
+        this.projects = this.projects.filter(p => p.getId() !== data.id);
+        this.addProject(new Project(data.id, data.name, data.tasks));
+        return data;
+    } catch (error) {
+        console.error('POST error:', error);
+        throw error;
     }
+}
 
-    postTasks(projectId, task) {
-        $.ajax({
-            url: `http://localhost:8080/api/projects/${projectId}/tasks`,
+async postTasks(projectId, task) {
+    try {
+        const response = await fetch(`http://localhost:8080/api/projects/${projectId}/tasks/`, {
             method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(task),
-            success: (data) => {
-                console.log('POST success:', data);
-                const project = this.projects.find(p => p.getId() === projectId);
-                if (project) {
-                    project.addTask(new Task(data.id, data.title, data.description, data.completed));
-                }
-            },
-            error: (xhr, status, error) => {
-                console.error('POST error:', error);
-            }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task)
         });
+        const data = await response.json();
+        const project = this.projects.find(p => p.getId() === projectId);
+        if (project) {
+            project.addTask(new Task(data));
+        }
+        return data;
+    } catch (error) {
+        console.error('POST error:', error);
+        throw error;
+    }
+}
+
+    async deleteProject(projectId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/projects/${projectId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                this.projects = this.projects.filter(project => project.getId() !== projectId);
+                return true;
+            } else {
+                throw new Error('Error deleting project');
+            }
+        } catch (error) {
+            console.error('Error deleting project:', error);
+            throw error;
+        }
     }
 
-    deleteProject(projectId) {
-        $.ajax({
-            url: `http://localhost:8080/api/projects/${projectId}`,
-            method: 'DELETE',
-            success: () => {
-                console.log('Project deleted');
-                const index = this.projects.findIndex(project => project.getId() === projectId);
-                if (index !== -1) {
-                    this.projects.splice(index, 1);
-                }
-            },
-            error: (xhr, status, error) => {
-                console.error('Error deleting project:', error);
-            }
-        });
-    }
-
-    deleteTask(projectId, taskId) {
-        $.ajax({
-            url: `http://localhost:8080/api/projects/${projectId}/tasks/${taskId}`,
-            method: 'DELETE',
-            success: () => {
-                console.log('Task deleted');
+    async deleteTask(projectId, taskId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/projects/${projectId}/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
                 const project = this.projects.find(p => p.getId() === projectId);
                 if (project) {
                     project.deleteTask(taskId);
                 }
-            },
-            error: (xhr, status, error) => {
-                console.error('Error deleting task:', error);
+                return true;
+            } else {
+                throw new Error('Error deleting task');
             }
-        });
+        } catch (error) {
+            console.error('Error deleting task:', error);
+            throw error;
+        }
     }
 
     updateLocalStorage() {
@@ -115,7 +119,10 @@ export default class ProjectModel {
     }
 
     addProject(project) {
+       console.log('Adding project:', project);
         this.projects.push(project);
+        console.log('Current projects:', this.projects);
+        
     }
 
     getProjects() {
